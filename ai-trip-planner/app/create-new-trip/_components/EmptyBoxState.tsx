@@ -1,4 +1,4 @@
-import { suggestions } from '@/app/_components/Hero';
+import { suggestions } from '@/app/_components/suggestions';
 import React from 'react'
 
 function EmptyBoxState({ onSelectOption }: any) {
@@ -9,12 +9,12 @@ function EmptyBoxState({ onSelectOption }: any) {
             <p className='text-center text-gray-400 mt-2'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officia possimus assumenda magnam rerum ducimus, omnis quo mollitia officiis esse excepturi repellat expedita aliquam.</p>
 
             <div className='flex flex-col gap-5 mt-7'>
-                {suggestions.map((suggestions, index) => (
+                {suggestions.map((suggestion, index) => (
                     <div key={index}
-                        onClick={() => onSelectOption(suggestions.title)}
+                        onClick={() => onSelectOption(suggestion.title)}
                         className='flex items-center gap-2 p-3 border rounded-xl cursur-pointer hover:border-primary hover:text-primary transition-all'>
-                        {suggestions.icon}
-                        <h2 className='text-lg'>{suggestions.title}</h2>
+                        {suggestion.icon}
+                        <h2 className='text-lg'>{suggestion.title}</h2>
                     </div>
                 ))}
             </div>

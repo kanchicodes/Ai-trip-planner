@@ -23,11 +23,11 @@ Do not ask multiple questions at once, and never ask irrelevant questions.
 If any answer is missing or unclear, politely ask the user to clarify before proceeding.
 Always maintain a conversational, interactive style while asking questions.
 
-Along with response also send which ui component to display for generative UI for example budget/groupSize/TripDuration/Final, where Final means AI generating complete final output
+Along with response also send which ui component to display for generative UI for example budget/groupSize/tripDuration/final, where Final means AI generating complete final output
 
 Once all required information is collected, generate and return a strict JSON response only (no explanations or extra text) with following JSON schema:
 json{
-  "ui": "budget/groupSize/TripDuration/Final",
+  "ui": "budget/groupSize/tripDuration/final",
   "TextResp": ""
 }`
 
@@ -35,9 +35,9 @@ json{
 export async function POST(req: NextRequest) {
     const { messages } = await req.json();
     try {
-        const completion = await openai.chat.completions.create({
-            model: 'openai/gpt-4.1-mini',
-            response_format: { type: 'json_object' },
+        const payload = {
+            model: 'openai/gpt-oss-20b:free',
+            response_format: { type: 'json_object' as 'json_object' },
             messages: [
                 {
                     role: 'system',
@@ -45,13 +45,19 @@ export async function POST(req: NextRequest) {
                 },
                 ...messages,
             ],
-        });
-        console.log(completion.choices[0].message);
-
-        const message = completion.choices[0].message;
-
-        return NextResponse.json(JSON.parse(message.content ?? ''));
+        };
+        try {
+            const completion = await openai.chat.completions.create(payload);
+            console.log('OpenRouter API raw response:', completion);
+            const message = completion.choices[0].message;
+            console.log('AI message content:', message.content);
+            return NextResponse.json(JSON.parse(message.content ?? '{"TextResp":"AI returned blank response.","ui":"final"}'));
+        } catch (apiError) {
+            console.error('OpenAI/OpenRouter API error:', apiError, 'Payload:', payload);
+            return NextResponse.json({ error: 'OpenAI/OpenRouter API error', details: apiError }, { status: 500 });
+        }
     } catch (e) {
-        return NextResponse.json(e);
+        console.error('General error in /api/aimodel:', e);
+        return NextResponse.json({ error: 'General error', details: e }, { status: 500 });
     }
 }

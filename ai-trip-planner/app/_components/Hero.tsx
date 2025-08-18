@@ -3,29 +3,12 @@ import HeroVideoDialog from '@/components/magicui/hero-video-dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser } from '@clerk/nextjs';
-import { ArrowDown, Globe, Globe2, Landmark, Plane, Send } from 'lucide-react';
+import { ArrowDown, Send } from 'lucide-react';
+import { suggestions } from './suggestions';
 import { useRouter } from 'next/navigation';
 import React from 'react'
 
-export const suggestions = [
-    {
-        title: "Create New Trip",
-        icon: <Globe className='text-blue-400 w-5 h-5' />,
-    },
-    {
-        title: "Inspire Me where to go",
-        icon: <Plane className='text-green-500 w-5 h-5' />,
-    },
-    {
-        title: "Discover hidden gems",
-        icon: <Landmark className='text-orange-500 w-5 h-5' />,
-    },
-    {
-        title: "Adventure destinations",
-        icon: <Globe2 className='text-yellow-600 w-5 h-5' />,
-    },
-
-]
+// Removed suggestions array
 
 function Hero() {
     const { user } = useUser();
@@ -59,13 +42,12 @@ function Hero() {
 
                 {/* suggestion list */}
                 <div className='flex gap-5'>
-                    {suggestions.map((suggestions, index) => (
+                    {suggestions.map((suggestion, index) => (
                         <div key={index} className='flex items-center gap-2 p-2 border rounded-full cursur-pointer hover:bg-primary hover:text-white transition-all'>
-                            {suggestions.icon}
-                            <h2 className='text-sm'>{suggestions.title}</h2>
+                            {suggestion.icon}
+                            <h2 className='text-sm'>{suggestion.title}</h2>
                         </div>))}
-                        </div>
-
+                </div>
                     <div className='flex items-center justify-center flex-col'>
                         <h2 className='my-7 mt-14 flex gap-2 items-center'>Not sure where to go?<strong>See how it works</strong><ArrowDown /></h2>
                     </div>
