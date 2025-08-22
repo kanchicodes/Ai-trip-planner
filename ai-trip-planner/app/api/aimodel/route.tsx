@@ -24,7 +24,7 @@ If any answer is missing or unclear, politely ask the user to clarify before pro
 Always maintain a conversational, interactive style while asking questions.
 
 Along with response also send which ui component to display for generative UI for example budget/groupSize/tripDuration/final, where Final means AI generating complete final output
-
+Respond ONLY with a valid JSON object matching this schema, and nothing else.
 Once all required information is collected, generate and return a strict JSON response only (no explanations or extra text) with following JSON schema:
 json{
   "ui": "budget/groupSize/tripDuration/final",
@@ -32,7 +32,7 @@ json{
 }`
 
 
-const FINAL_PROMPT = ` Generate Travel Plan with give details, give me Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place image Url, Geo Coordinates, Place address, ticket Pricing, Time travel each of the location, with each day plan with best time to visit in JSON format.
+const FINAL_PROMPT = ` Generate Travel Plan with give details, give me Hotels options list with HotelName, Hotel address, Price, hotel image url, geo coordinates, rating, descriptions and suggest itinerary with placeName, Place Details, Place image Url, Geo Coordinates, Place address, ticket Pricing, Time travel each of the location, with each day plan with best time to visit in JSON format.Respond ONLY with a valid JSON object matching this schema, and nothing else.
 Output Schema:
 {
   "trip_plan": {
@@ -126,7 +126,17 @@ export async function POST(req: NextRequest) {
             console.log('OpenRouter API raw response:', completion);
             const message = completion.choices[0].message;
             console.log('AI message content:', message.content);
-            return NextResponse.json(JSON.parse(message.content ?? '{"TextResp":"AI returned blank response.","ui":"final"}'));
+            try {
+                return NextResponse.json(JSON.parse(message.content ?? '{"TextResp":"AI returned blank response.","ui":"final"}'));
+            } catch (jsonError) {
+                console.error('AI response is not valid JSON:', jsonError, 'Raw content:', message.content);
+                return NextResponse.json({
+                    error: 'AI did not return valid JSON.',
+                    details: message.content,
+                    ui: 'final',
+                    TextResp: 'AI did not return a valid response. Please try again or rephrase your request.'
+                }, { status: 200 });
+            }
         } catch (apiError) {
             console.error('OpenAI/OpenRouter API error:', apiError, 'Payload:', payload);
             return NextResponse.json({ error: 'OpenAI/OpenRouter API error', details: apiError }, { status: 500 });
