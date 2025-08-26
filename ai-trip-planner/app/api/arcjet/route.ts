@@ -2,7 +2,7 @@ import arcjet, { detectBot, shield, tokenBucket } from "@arcjet/next";
 import { isSpoofedBot } from "@arcjet/inspect";
 import { NextResponse } from "next/server";
 
-const aj = arcjet({
+export const aj = arcjet({
   key: process.env.ARCJET_KEY!, // Get your site key from https://app.arcjet.com
   rules: [
     // Shield protects your app from common attacks e.g. SQL injection
@@ -27,13 +27,13 @@ const aj = arcjet({
       //characteristics: ["ip.src"],
       refillRate: 5, // Refill 5 tokens per interval
       interval: 86400, // Refill every 10 seconds
-      capacity: 10, // Bucket capacity of 10 tokens
+      capacity: 5, // Bucket capacity of 10 tokens
     }),
   ],
 });
 
 export async function GET(req: Request) {
-  const decision = await aj.protect(req, { requested: 5 }); // Deduct 5 tokens from the bucket
+  const decision = await aj.protect(req, {userId, requested: 5 }); // Deduct 5 tokens from the bucket
   console.log("Arcjet decision", decision);
 
   if (decision.isDenied()) {

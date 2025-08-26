@@ -8,7 +8,7 @@ import Link from 'next/link';
 import HotelCardItem from './HotelCardItem';
 import PlaceCardItem from './PlaceCardItem';
 import { useTripDetail } from '../provider';
-import { TripInfo } from '../create-new-trip/_components/ChatBox';
+import type { TripInfo } from '../create-new-trip/_components/ChatBox';
 
 
 
@@ -71,7 +71,7 @@ function Itinerary() {
             content: (
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                     {tripData?.hotels.map((hotel, index) => (
-                        <HotelCardItem hotel={hotel} />
+                        <HotelCardItem key={index} hotel={hotel} />
                     ))}
                 </div>
             ),
@@ -83,7 +83,7 @@ function Itinerary() {
                     <p>Best Time: {dayData?.best_time_to_visit_day}</p>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                         {dayData?.activities.map((activity, index) => (
-                            <PlaceCardItem activity={activity} />
+                            <PlaceCardItem key={index} activity={activity} />
                         ))}
                     </div>
                 </div>
@@ -97,7 +97,11 @@ function Itinerary() {
                 :
                 <div>
                     <h2 className='flex gap-2 text-3xl text-white left-20 items-center absolute bottom-20'><ArrowLeft /> Getting to know you to build perfect trip here...</h2>
-                    <Image src={'/travel.png'}
+                    <Image 
+                        src={'/travel.webp'}
+                        width={800}
+                        height={400}
+                        alt="Travel illustration"
                         className='w-full h-full object-cover rounded-3xl'
                     />
                 </div>

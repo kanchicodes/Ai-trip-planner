@@ -4,9 +4,9 @@ import Header from './_components/Header';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useUser } from '@clerk/nextjs';
-import { UserDetailContext, TripDetailContext } from '@/contex/UserDetailContext';
+import { UserDetailContext } from '@/contex/UserDetailContext';
 import { TripInfo } from './create-new-trip/_components/ChatBox';
-import { TripContexType } from '@/contex/TripDetailContex';
+import { TripContexType, TripDetailContext } from '@/contex/TripDetailContext';
 
 
 

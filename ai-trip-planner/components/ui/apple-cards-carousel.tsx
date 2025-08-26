@@ -276,22 +276,29 @@ export const BlurImage = ({
   ...rest
 }: ImageProps) => {
   const [isLoading, setLoading] = useState(true);
-  return (
-    <img
-      className={cn(
-        "h-full w-full transition duration-300",
-        isLoading ? "blur-sm" : "blur-0",
-        className,
-      )}
-      onLoad={() => setLoading(false)}
-      src={src as string}
-      width={width}
-      height={height}
-      loading="lazy"
-      decoding="async"
-      blurDataURL={typeof src === "string" ? src : undefined}
-      alt={alt ? alt : "Background of a beautiful view"}
-      {...rest}
-    />
-  );
+  // Type-safe handling for string and StaticImport
+  let imgSrc: string = '';
+  if (typeof src === 'string') {
+    imgSrc = src;
+  } else if (src && typeof src === 'object' && 'src' in src) {
+    imgSrc = (src as any).src;
+  }
+  // Remove 'fill' prop if present, as it's not valid for <img>
+  const { fill, ...restProps } = rest;
+  const imgProps: any = {
+    className: cn(
+      "h-full w-full transition duration-300",
+      isLoading ? "blur-sm" : "blur-0",
+      className,
+    ),
+    onLoad: () => setLoading(false),
+    src: imgSrc,
+    loading: "lazy",
+    decoding: "async",
+    alt: alt ? alt : "Background of a beautiful view",
+    ...restProps
+  };
+  if (width) imgProps.width = width;
+  if (height) imgProps.height = height;
+  return <img {...imgProps} />;
 };
